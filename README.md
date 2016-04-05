@@ -8,5 +8,5 @@ VDE-Runner helps you to setup a <a href="http://wiki.virtualsquare.org/wiki/inde
 To generate a link failure, find out the <i>vde_plug</i> process id of the switch on either end and kill it. 
 
 <h3> Capture and Analyze Traffic </h3>
-To support traffic capture, <i>--enable-experimental</i> flag needs to be parsed when compiling VDE from source. The traffic of each switch is saved in /tmp/fifo+[swithName]. To anaylize it, either wireshark or tshark is useful. 
+To support traffic capture, <i>--enable-experimental</i> flag needs to be parsed when compiling VDE from source. The traffic of each switch is saved in /tmp/fifo+[switchName]. To anaylize it, either wireshark or tshark is useful. 
 
