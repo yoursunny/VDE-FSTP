@@ -83,6 +83,10 @@ class VDE_Runner(object):
     	print "-----------------------Start to setup all switchs with links-------------------------"
         subprocess.call(["killall","vde_switch"])
         subprocess.call(["killall","vde_plug"])
+        subprocess.call("rm /tmp/fifo*",shell=True)
+        subprocess.call("rm /tmp/myfifo*",shell=True)
+        subprocess.call("rm -r /tmp/switch*",shell=True)
+        
 
         #add nodes in VDE
         for eachNode in self.nodes:
@@ -92,12 +96,12 @@ class VDE_Runner(object):
             else:
                 subprocess.call(["vde_switch","-d","-s","/tmp/switch-"+eachNode.name, "-M", "/tmp/mgmt-"+eachNode.name])
 
-            subprocess.call(["mkfifo","/tmp/fifo-"+eachNode.name])
+            #subprocess.call(["mkfifo","/tmp/myfifo-"+eachNode.name])
 
             subprocess.call("echo 'plugin/add /usr/local/lib/vde2/plugins/pdump.so' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
             command_dump = "echo 'pdump/filename /tmp/myfifo-"+eachNode.name+"' | nc -U /tmp/mgmt-"+eachNode.name
             subprocess.call(command_dump, shell=True)
-            subprocess.call("echo 'pdump/buffered 0' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
+            #subprocess.call("echo 'pdump/buffered 0' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
             subprocess.call("echo 'pdump/active 1' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
 
         #add links in VDE
@@ -135,6 +139,28 @@ class VDE_Runner(object):
             command = "echo 'fstp/setfstp 1' | nc -U  /tmp/mgmt-"+eachNode.name
             subprocess.call(command, shell=True)
 
+    def addLink(self,sourceName, destName):
+        command = "dpipe -d vde_plug /tmp/switch-"+str(sourceName)+" = vde_plug /tmp/switch-"+(destName)
+        subprocess.call(command, shell=True)
+
+
+    def deleteLink(self,sourceName,destName):
+        #the same order as input
+        print "-----------------------DELETE a link in VDE--------------------------"
+        out = subprocess.check_output("ps -ef |grep 'vde_plug /tmp/switch-"+str(destName)+"'",shell=True)
+        outList = out.split('\n')[:-3]
+        for eachProcess in outList:
+            processInfo = eachProcess.split(' ')
+            while '' in processInfo:
+                processInfo.remove('')
+            if '1' in processInfo:
+                continue
+            else:
+                print "##the process is deleted: ", processInfo
+                processId = processInfo[2]
+                subprocess.call("kill "+processId,shell=True)
+                break
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print "Error : input configuration file"
@@ -143,5 +169,10 @@ if __name__ == "__main__":
         vde_runner.runVDE()
         vde_runner.printFSTP()
         vde_runner.enableFSTP()
-        time.sleep(5)
-        vde_runner.printFSTP()
+        time.sleep(30)
+        vde_runner.deleteLink(6,9)
+        time.sleep(32)
+        exit(0)
+
+#from vde_runner import Node, VDE_Runner
+#v = VDE_Runner("4*3grid.conf")
