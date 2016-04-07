@@ -45,7 +45,7 @@ def coutPackets():
 
     wf = open("analysis-result.txt","w")
     for k,v in results.items():
-    	wf.writelines(str(k)+" "+str(v/2)+"\n")
+    	wf.writelines(str(v/2)+"\n")
     wf.close()
     print results
 
