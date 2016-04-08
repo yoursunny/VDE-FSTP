@@ -170,8 +170,8 @@ if __name__ == "__main__":
         vde_runner.printFSTP()
         vde_runner.enableFSTP()
         time.sleep(30)
-        #vde_runner.deleteLink(6,9)
-        vde_runner.deleteLink(2, 3)
+        vde_runner.deleteLink(6,9)
+        #vde_runner.deleteLink(2, 3)
         time.sleep(32)
         exit(0)
 
