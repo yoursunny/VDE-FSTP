@@ -19,7 +19,7 @@ def coutPackets():
     files = os.listdir("myfifo/")
     print files
     results = {}
-    for i in range(1,61):
+    for i in range(1,91):
         results[i] = 0
     
     for eachFile in files:
@@ -38,7 +38,7 @@ def coutPackets():
             if index < 0:
                  print "Index error: negtive integer"
                  exit(1)
-            if index <= 59:
+            if index <= 89:
                 results[index] += 1
 
         f.close()

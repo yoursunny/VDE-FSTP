@@ -94,7 +94,9 @@ class VDE_Runner(object):
             if eachNode == self.rootNode:
                 subprocess.call(["vde_switch","-d","-s","/tmp/switch-"+eachNode.name, "-M", "/tmp/mgmt-"+eachNode.name, "--macaddr", "00:00:00:00:00:01"])
             else:
-                subprocess.call(["vde_switch","-d","-s","/tmp/switch-"+eachNode.name, "-M", "/tmp/mgmt-"+eachNode.name])
+		cmd = "vde_switch -d -s /tmp/switch-"+eachNode.name+" -M /tmp/mgmt-"+eachNode.name
+		print "@@@@Command : "+cmd
+                subprocess.call(cmd, shell=True)
 
             #subprocess.call(["mkfifo","/tmp/myfifo-"+eachNode.name])
 
@@ -140,7 +142,7 @@ class VDE_Runner(object):
             subprocess.call(command, shell=True)
 
     def addLink(self,sourceName, destName):
-        command = "dpipe -d vde_plug /tmp/switch-"+str(sourceName)+" = vde_plug /tmp/switch-"+(destName)
+        command = "dpipe -d vde_plug /tmp/switch-"+str(sourceName)+" = vde_plug /tmp/switch-"+str(destName)
         subprocess.call(command, shell=True)
 
 
@@ -172,7 +174,11 @@ if __name__ == "__main__":
         time.sleep(30)
         vde_runner.deleteLink(6,9)
         #vde_runner.deleteLink(2, 3)
-        time.sleep(32)
+        #vde_runner.deleteLink(4, 5)
+        #vde_runner.deleteLink(9, 12)
+        time.sleep(30)
+	vde_runner.addLink(6,9)
+	time.sleep(32)
         exit(0)
 
 #from vde_runner import Node, VDE_Runner
