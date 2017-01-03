@@ -1,12 +1,18 @@
-# VDE-Runner
+# VDE-FSTP
 
-<h3> Introduction </h3>
+VDE-FSTP emulates [Fast Spanning Tree Protocol](http://wiki.v2.cs.unibo.it/wiki/index.php/Fast_Spanning_Tree_Protocol) using [Virtual Distributed Ethernet](http://wiki.virtualsquare.org/wiki/index.php/VDE_Basic_Networking).
 
-VDE-Runner helps you to setup a <a href="http://wiki.virtualsquare.org/wiki/index.php/VDE_Basic_Networking">VDE network</a> and enable the <a href="http://wiki.v2.cs.unibo.it/wiki/index.php/Fast_Spanning_Tree_Protocol">Fast Spanning Tree Protocol<a> on each switch. The topology information is read from a configuration file. A topology example is given out for format specification.
+## Installation
 
-<h3> Simulate A Link Failure</h3>
-To simulate a link failure, find out the <i>vde_plug</i> process id of the switch on either end and kill it. 
+Ubuntu 14.04
 
-<h3> Capture and Analyze Traffic </h3>
-To support traffic capture, <i>--enable-experimental</i> flag needs to be parsed when compiling VDE from source. The traffic of each switch is saved in /tmp/fifo+[switchName]. To anaylize it, either wireshark or tshark is useful. The analyzer.py will convert .fifo to .txt and generate the statistics. 
+`sudo apt-get install vde2 tshark`
 
+## Usage
+
+The topology information is read from a configuration file. An example is given in `topology-example.conf`.
+
+To simulate a link failure, find the PID of `vde_plug` process and kill it.
+
+Traffic trace is saved in `/tmp/myfifo-<switch-name>`, and can be analyzed with Wireshark.
+`analyzer.py` collects statistics about how many packets are transmitted per second.

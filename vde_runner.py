@@ -100,7 +100,7 @@ class VDE_Runner(object):
 
             #subprocess.call(["mkfifo","/tmp/myfifo-"+eachNode.name])
 
-            subprocess.call("echo 'plugin/add /usr/local/lib/vde2/plugins/pdump.so' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
+            subprocess.call("echo 'plugin/add /usr/lib/vde2/plugins/pdump.so' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
             command_dump = "echo 'pdump/filename /tmp/myfifo-"+eachNode.name+"' | nc -U /tmp/mgmt-"+eachNode.name
             subprocess.call(command_dump, shell=True)
             #subprocess.call("echo 'pdump/buffered 0' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
