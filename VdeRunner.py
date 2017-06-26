@@ -6,53 +6,13 @@ from Node import Node
 
 class VdeRunner(object):
     def __init__(self, configureFileName):
-        self.nodes = []
-        self.links = []
-        self.rootNode = object()
+        from FileTopo import FileTopo
+        topo = FileTopo(configureFileName)
 
-        #Node,Port
-        self.rootPaths = []
-
-        #construct the topology via conf file     
-        configureFile = open(configureFileName,"r")
-        for eachLine in configureFile:
-            print eachLine
-            if len(eachLine) < 2:
-                break
-
-            if "nodes" in  eachLine:
-                isReadingNodes = True
-                isReadingLinks = False
-                continue
-            elif "links" in eachLine:
-                isReadingLinks = True
-                isReadingNodes = False
-                continue
-
-            if isReadingNodes:
-                eachLineList = eachLine.split(":")
-                newNode = Node(eachLineList[0])
-                self.nodes.append(newNode)
-                if "root" in eachLineList[1]:
-                    self.rootNode = newNode
-
-            if isReadingLinks:
-                
-                #sourceNode = eachLineList[0].split["-"][0]
-                #destinationNode = eachLineList[0].split["-"][1]
-                eachLine = eachLine[:-1]
-                eachLineList = eachLine.split(":")
-
-                firtPart = eachLineList[0]
-                sourceNode = self.findNode(firtPart.split("-")[0])
-                destNode = self.findNode(firtPart.split("-")[1])
-                self.links.append((sourceNode,destNode))
-
-                sourceNode.addLink(destNode)
-                destNode.addLink(sourceNode)
-
-                if "root" in eachLineList[1]:
-                    self.rootPaths.append((sourceNode,destNode))
+        self.nodes = topo.nodes.values()
+        self.links = topo.links
+        self.rootNode = topo.rootNode
+        self.rootPaths = topo.rootPaths
 
         print self.nodes
         print self.links
