@@ -1,6 +1,4 @@
 import subprocess
-import sys
-import time
 
 from Node import Node
 
@@ -107,23 +105,6 @@ class VdeRunner(object):
                 subprocess.call("kill "+processId,shell=True)
                 break
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print "Error : input configuration file"
-    else:
-        vr = VdeRunner(sys.argv[1])
-        vr.runVDE()
-        vr.printFSTP()
-        vr.enableFSTP()
-        time.sleep(30)
-        vr.deleteLink(6,9)
-        #vr.deleteLink(2, 3)
-        #vr.deleteLink(4, 5)
-        #vr.deleteLink(9, 12)
-        time.sleep(30)
-        vr.addLink(6,9)
-        time.sleep(32)
-        exit(0)
-
-#from VdeRunner import Node, VdeRunner
-#v = VdeRunner("4*3grid.conf")
+    def stop(self):
+        subprocess.call(["killall","vde_switch"])
+        subprocess.call(["killall","vde_plug"])
