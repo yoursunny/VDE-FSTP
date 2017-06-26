@@ -2,25 +2,9 @@ import subprocess
 import sys
 import time
 
-class Node(object):
-    def __init__(self, name):
-        self.name = name
-        self.nPorts = 0
-        self.portNode = {}
+from Node import Node
 
-    def addLink(self, node):
-        self.nPorts += 1
-        self.portNode[self.nPorts] = node
-
-    def getPort(self, node):
-        for i in range(1, self.nPorts+1):
-            if self.portNode[i] == node:
-                return i
-
-    def __str__(self):
-        return self.name
-
-class VDE_Runner(object):
+class VdeRunner(object):
     def __init__(self, configureFileName):
         self.nodes = []
         self.links = []
@@ -80,7 +64,7 @@ class VDE_Runner(object):
                 return eachNode
 
     def runVDE(self):
-    	print "-----------------------Start to setup all switchs with links-------------------------"
+        print "-----------------------Start to setup all switchs with links-------------------------"
         subprocess.call(["killall","vde_switch"])
         subprocess.call(["killall","vde_plug"])
         subprocess.call("rm /tmp/fifo*",shell=True)
@@ -94,17 +78,17 @@ class VDE_Runner(object):
             if eachNode == self.rootNode:
                 subprocess.call(["vde_switch","-d","-s","/tmp/switch-"+eachNode.name, "-M", "/tmp/mgmt-"+eachNode.name, "--macaddr", "00:00:00:00:00:01"])
             else:
-		cmd = "vde_switch -d -s /tmp/switch-"+eachNode.name+" -M /tmp/mgmt-"+eachNode.name
-		print "@@@@Command : "+cmd
+                cmd = "vde_switch -d -s /tmp/switch-"+eachNode.name+" -M /tmp/mgmt-"+eachNode.name
+                print "@@@@Command : "+cmd
                 subprocess.call(cmd, shell=True)
 
-            #subprocess.call(["mkfifo","/tmp/myfifo-"+eachNode.name])
+                #subprocess.call(["mkfifo","/tmp/myfifo-"+eachNode.name])
 
-            subprocess.call("echo 'plugin/add /usr/lib/vde2/plugins/pdump.so' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
-            command_dump = "echo 'pdump/filename /tmp/myfifo-"+eachNode.name+"' | nc -U /tmp/mgmt-"+eachNode.name
-            subprocess.call(command_dump, shell=True)
-            #subprocess.call("echo 'pdump/buffered 0' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
-            subprocess.call("echo 'pdump/active 1' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
+                subprocess.call("echo 'plugin/add /usr/lib/vde2/plugins/pdump.so' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
+                command_dump = "echo 'pdump/filename /tmp/myfifo-"+eachNode.name+"' | nc -U /tmp/mgmt-"+eachNode.name
+                subprocess.call(command_dump, shell=True)
+                #subprocess.call("echo 'pdump/buffered 0' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
+                subprocess.call("echo 'pdump/active 1' |nc -U /tmp/mgmt-"+eachNode.name, shell=True)
 
         #add links in VDE
         for eachLink in self.links:
@@ -129,15 +113,15 @@ class VDE_Runner(object):
 
 
     def printFSTP(self):
-    	print "-----------------------FSTP/PRINT for all switchs-------------------------"
+        print "-----------------------FSTP/PRINT for all switchs-------------------------"
         for eachNode in self.nodes:
             command = "echo 'fstp/print' | nc -U  /tmp/mgmt-"+eachNode.name
             subprocess.call(command, shell=True)
 
 
     def enableFSTP(self):
-    	print "-----------------------Enable FSTP for all switchs-------------------------"
-    	for eachNode in self.nodes:
+        print "-----------------------Enable FSTP for all switchs-------------------------"
+        for eachNode in self.nodes:
             command = "echo 'fstp/setfstp 1' | nc -U  /tmp/mgmt-"+eachNode.name
             subprocess.call(command, shell=True)
 
@@ -167,19 +151,19 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print "Error : input configuration file"
     else:
-        vde_runner = VDE_Runner(sys.argv[1])
-        vde_runner.runVDE()
-        vde_runner.printFSTP()
-        vde_runner.enableFSTP()
+        vr = VdeRunner(sys.argv[1])
+        vr.runVDE()
+        vr.printFSTP()
+        vr.enableFSTP()
         time.sleep(30)
-        vde_runner.deleteLink(6,9)
-        #vde_runner.deleteLink(2, 3)
-        #vde_runner.deleteLink(4, 5)
-        #vde_runner.deleteLink(9, 12)
+        vr.deleteLink(6,9)
+        #vr.deleteLink(2, 3)
+        #vr.deleteLink(4, 5)
+        #vr.deleteLink(9, 12)
         time.sleep(30)
-	vde_runner.addLink(6,9)
-	time.sleep(32)
+        vr.addLink(6,9)
+        time.sleep(32)
         exit(0)
 
-#from vde_runner import Node, VDE_Runner
-#v = VDE_Runner("4*3grid.conf")
+#from VdeRunner import Node, VdeRunner
+#v = VdeRunner("4*3grid.conf")
